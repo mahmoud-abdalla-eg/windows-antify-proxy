@@ -37,16 +37,12 @@ main repo project/
 |   |-- App.xaml            # Application entry point and theme resources
 |   |-- MainWindow.xaml     # Fluent UI layout and navigation
 |   |-- WindowsAntifyProxy.csproj
-|-- website/                # Landing Page (Vite + React)
-|   |-- public/             # Static web assets
-|   |-- src/                # React components and styling
-|   |-- package.json
-|   |-- vite.config.js
 |-- docs/                   # Technical Documentation
 |   |-- overview.md         # Problem definition and feature summary
 |   |-- architecture.md     # Process Environment Block internals and Win32 APIs
 |   |-- configuration.md    # JSON schema and settings storage
 |   |-- api-reference.md    # Internal services and models reference
+|-- LICENSE                 # MIT License
 |-- .gitignore
 |-- README.md
 ```
@@ -59,7 +55,6 @@ main repo project/
 
 - Windows 10 (version 1809 or higher) or Windows 11 (64-bit)
 - .NET 8.0 SDK (Desktop Runtime)
-- Node.js (v18 or higher) and npm (for website)
 
 ### Building the Desktop Application
 
@@ -76,23 +71,6 @@ main repo project/
 3. Publish a standalone single-file binary:
    ```powershell
    dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o ../release
-   ```
-
-### Building the Website
-
-1. Navigate to the `website` directory:
-   ```powershell
-   cd website
-   ```
-
-2. Install dependencies:
-   ```powershell
-   npm install
-   ```
-
-3. Build production bundle:
-   ```powershell
-   npm run build
    ```
 
 ---
