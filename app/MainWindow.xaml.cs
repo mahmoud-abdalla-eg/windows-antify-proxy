@@ -621,11 +621,97 @@ namespace WindowsAntifyProxy
             }
         }
 
+        private RuleItem? _selectedShortcutRule;
+
+        private void OpenShortcutModal(RuleItem rule)
+        {
+            _selectedShortcutRule = rule;
+            TxtShortcutModalTitle.Text = $"Create Direct Shortcut for '{rule.Name}'";
+            TxtShortcutModalSubtitle.Text = $"Launch '{rule.Name}' directly with proxy '{rule.ProxyName}' without opening this manager first";
+            InlineShortcutModal.Visibility = Visibility.Visible;
+        }
+
+        private void CloseShortcutModal_Click(object sender, RoutedEventArgs e)
+        {
+            InlineShortcutModal.Visibility = Visibility.Collapsed;
+        }
+
+        private void ShortcutModalStartMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedShortcutRule == null) return;
+            try
+            {
+                var path = ShortcutService.CreateStartMenuShortcut(_selectedShortcutRule);
+                ShowToast($"✔ Added '{_selectedShortcutRule.Name} (Proxy)' to Windows Start Menu!");
+                AddActivityLog($"🚀 Start Menu shortcut created for '{_selectedShortcutRule.Name}'. Searchable in Windows.");
+            }
+            catch (Exception ex)
+            {
+                ShowToast($"Failed to create shortcut: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void ShortcutModalTaskbar_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedShortcutRule == null) return;
+            try
+            {
+                var path = ShortcutService.CreateTaskbarShortcut(_selectedShortcutRule);
+                ShowToast("✔ Shortcut created! Right-click highlighted file & select 'Pin to taskbar'.");
+                AddActivityLog($"📍 Taskbar shortcut prepared for '{_selectedShortcutRule.Name}'. Highlighted in Explorer.");
+            }
+            catch (Exception ex)
+            {
+                ShowToast($"Failed to prepare shortcut: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void ShortcutModalDesktop_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedShortcutRule == null) return;
+            try
+            {
+                var path = ShortcutService.CreateDesktopShortcut(_selectedShortcutRule);
+                ShowToast($"✔ Created Desktop shortcut for '{_selectedShortcutRule.Name}'!");
+                AddActivityLog($"📌 Desktop shortcut created for '{_selectedShortcutRule.Name}': {Path.GetFileName(path)}");
+            }
+            catch (Exception ex)
+            {
+                ShowToast($"Failed to create shortcut: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void ShortcutModalAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedShortcutRule == null) return;
+            try
+            {
+                ShortcutService.CreateEverywhereShortcuts(_selectedShortcutRule);
+                ShowToast("✔ Created on Desktop, Start Menu & opened to Pin to taskbar!");
+                AddActivityLog($"⚡ Direct shortcuts created everywhere for '{_selectedShortcutRule.Name}'.");
+            }
+            catch (Exception ex)
+            {
+                ShowToast($"Failed to create shortcuts: {ex.Message}", isWarning: true);
+            }
+        }
+
+        private void ShortcutModalOpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var programsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Windows Antify Proxy");
+                Directory.CreateDirectory(programsFolder);
+                Process.Start(new ProcessStartInfo { FileName = programsFolder, UseShellExecute = true });
+            }
+            catch { }
+        }
+
         private void RuleShortcut_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement elem && elem.DataContext is RuleItem rule)
             {
-                ShowShortcutMenu(elem, rule);
+                OpenShortcutModal(rule);
             }
         }
 
@@ -635,9 +721,9 @@ namespace WindowsAntifyProxy
                 ?? Settings.Rules.FirstOrDefault(r => r.Name.Contains("Antigravity", StringComparison.OrdinalIgnoreCase))
                 ?? Settings.Rules.FirstOrDefault();
 
-            if (rule != null && sender is FrameworkElement elem)
+            if (rule != null)
             {
-                ShowShortcutMenu(elem, rule);
+                OpenShortcutModal(rule);
             }
             else
             {
@@ -647,10 +733,10 @@ namespace WindowsAntifyProxy
 
         private void ModalShortcut_Click(object sender, RoutedEventArgs e)
         {
-            if (_editingRule != null && sender is FrameworkElement elem)
+            if (_editingRule != null)
             {
                 ModalSaveRule_Click(sender, e);
-                ShowShortcutMenu(elem, _editingRule);
+                OpenShortcutModal(_editingRule);
             }
         }
 

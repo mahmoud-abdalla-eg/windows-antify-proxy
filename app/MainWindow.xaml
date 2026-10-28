@@ -1488,7 +1488,131 @@
                 </Border>
             </Grid>
 
-            <!-- 2. Kill Switch Alert Modal (Triggered when Proxy is Offline!) -->
+            <!-- 2. Direct Shortcut Creator Modal Dialog -->
+            <Grid x:Name="InlineShortcutModal" Grid.Row="0" Grid.RowSpan="2" Background="#99000000" Visibility="Collapsed">
+                <Border Background="#1E1E22" BorderBrush="#3A3A44" BorderThickness="1" CornerRadius="8" 
+                        Width="560" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Modal Header -->
+                        <Border Grid.Row="0" Background="#18181B" BorderBrush="#2A2A30" BorderThickness="0,0,0,1" Padding="18,14">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock x:Name="TxtShortcutModalTitle" Text="Create Direct Launch Shortcut" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                    <TextBlock x:Name="TxtShortcutModalSubtitle" Text="Launch application directly through proxy without opening this manager" FontSize="11" Foreground="#888890" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Style="{StaticResource WinStandardButton}" Width="28" Height="28" Padding="0" Click="CloseShortcutModal_Click">
+                                    <TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="#D1D1D6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Modal Body -->
+                        <StackPanel Grid.Row="1" Margin="20,16">
+                            <TextBlock Text="Choose where you want to create your direct launch shortcut:" FontSize="12" Foreground="#CCCCCC" Margin="0,0,0,14"/>
+
+                            <!-- Option 1: Start Menu -->
+                            <Border Background="#25252B" BorderBrush="#32323A" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" Background="#1E293B" CornerRadius="6" Margin="0,0,12,0">
+                                        <TextBlock Text="&#xE718;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#60CDFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Windows Start Menu" FontSize="13" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Searchable in Start search, can pin directly to Start tiles" FontSize="11" Foreground="#888890"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Add to Start" Style="{StaticResource WinPrimaryButton}" Padding="12,6" Click="ShortcutModalStartMenu_Click"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Option 2: Pin to Taskbar -->
+                            <Border Background="#25252B" BorderBrush="#32323A" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" Background="#143428" CornerRadius="6" Margin="0,0,12,0">
+                                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#4ADE80" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Windows Taskbar" FontSize="13" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Creates shortcut &amp; selects it in Explorer ready to pin" FontSize="11" Foreground="#888890"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Pin to Taskbar" Style="{StaticResource WinStandardButton}" Padding="12,6" Click="ShortcutModalTaskbar_Click"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Option 3: Desktop -->
+                            <Border Background="#25252B" BorderBrush="#32323A" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" Background="#332B1E" CornerRadius="6" Margin="0,0,12,0">
+                                        <TextBlock Text="&#xE7F4;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#FBBF24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Desktop Shortcut" FontSize="13" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Creates an icon directly on your Windows Desktop" FontSize="11" Foreground="#888890"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Add to Desktop" Style="{StaticResource WinStandardButton}" Padding="12,6" Click="ShortcutModalDesktop_Click"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Option 4: Everywhere / All Locations -->
+                            <Border Background="#1C2538" BorderBrush="#2563EB" BorderThickness="1" CornerRadius="6" Padding="12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="38" Height="38" Background="#1E3A8A" CornerRadius="6" Margin="0,0,12,0">
+                                        <TextBlock Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="#60CDFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Create in All Locations" FontSize="13" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                        <TextBlock Text="Adds to Start Menu, Desktop, and prepares Taskbar shortcut" FontSize="11" Foreground="#93C5FD"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Create All" Style="{StaticResource WinPrimaryButton}" Padding="14,6" Click="ShortcutModalAll_Click"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Modal Footer -->
+                        <Border Grid.Row="2" Background="#18181B" BorderBrush="#2A2A30" BorderThickness="0,1,0,0" Padding="18,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Open Programs Folder in Explorer" Style="{StaticResource WinStandardButton}" HorizontalAlignment="Left" Click="ShortcutModalOpenFolder_Click"/>
+                                <Button Grid.Column="1" Content="Done" Style="{StaticResource WinStandardButton}" Width="80" Click="CloseShortcutModal_Click"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- 3. Kill Switch Alert Modal (Triggered when Proxy is Offline!) -->
             <Grid x:Name="InlineKillSwitchAlert" Grid.Row="0" Grid.RowSpan="2" Background="#B3000000" Visibility="Collapsed">
                 <Border Background="#201518" BorderBrush="#A52A2A" BorderThickness="1.5" CornerRadius="8" 
                         Width="500" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24">
