@@ -621,6 +621,189 @@ namespace WindowsAntifyProxy
             }
         }
 
+        private void RuleShortcut_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement elem && elem.DataContext is RuleItem rule)
+            {
+                ShowShortcutMenu(elem, rule);
+            }
+        }
+
+        private void TopBarShortcut_Click(object sender, RoutedEventArgs e)
+        {
+            var rule = SelectedLaunchRule
+                ?? Settings.Rules.FirstOrDefault(r => r.Name.Contains("Antigravity", StringComparison.OrdinalIgnoreCase))
+                ?? Settings.Rules.FirstOrDefault();
+
+            if (rule != null && sender is FrameworkElement elem)
+            {
+                ShowShortcutMenu(elem, rule);
+            }
+            else
+            {
+                ShowToast("Please select or add an application rule first.", isWarning: true);
+            }
+        }
+
+        private void ModalShortcut_Click(object sender, RoutedEventArgs e)
+        {
+            if (_editingRule != null && sender is FrameworkElement elem)
+            {
+                ModalSaveRule_Click(sender, e);
+                ShowShortcutMenu(elem, _editingRule);
+            }
+        }
+
+        private void ShowShortcutMenu(FrameworkElement targetElement, RuleItem rule)
+        {
+            var menu = new ContextMenu();
+            if (TryFindResource("WinDarkContextMenu") is Style contextMenuStyle)
+            {
+                menu.Style = contextMenuStyle;
+            }
+
+            var menuItemStyle = TryFindResource("WinDarkMenuItem") as Style;
+
+            // Header title
+            var titleItem = new MenuItem
+            {
+                Header = $"Create Direct Shortcut for '{rule.Name}'",
+                IsEnabled = false,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = (Brush)new BrushConverter().ConvertFromString("#9499AD")!,
+                FontSize = 11,
+                Padding = new Thickness(10, 6, 10, 6)
+            };
+            if (menuItemStyle != null) titleItem.Style = menuItemStyle;
+            menu.Items.Add(titleItem);
+            menu.Items.Add(new Separator { Background = (Brush)new BrushConverter().ConvertFromString("#32323A")!, Margin = new Thickness(0, 3, 0, 3) });
+
+            // 1. Add to Desktop
+            var desktopItem = new MenuItem
+            {
+                Header = "Add to Desktop",
+                InputGestureText = "Desktop",
+                Foreground = Brushes.White,
+                Cursor = Cursors.Hand,
+                Icon = new TextBlock { Text = "\uE7F4", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 12, Foreground = (Brush)new BrushConverter().ConvertFromString("#60CDFF")! }
+            };
+            if (menuItemStyle != null) desktopItem.Style = menuItemStyle;
+            desktopItem.Click += (s, e) =>
+            {
+                try
+                {
+                    var path = ShortcutService.CreateDesktopShortcut(rule);
+                    ShowToast($"✔ Created Desktop shortcut for '{rule.Name}'!");
+                    AddActivityLog($"📌 Desktop shortcut created for '{rule.Name}': {Path.GetFileName(path)}");
+                }
+                catch (Exception ex)
+                {
+                    ShowToast($"Failed to create shortcut: {ex.Message}", isWarning: true);
+                }
+            };
+            menu.Items.Add(desktopItem);
+
+            // 2. Add to Start Menu
+            var startMenuItem = new MenuItem
+            {
+                Header = "Add to Start Menu (Pinned & Searchable)",
+                InputGestureText = "Start Menu",
+                Foreground = Brushes.White,
+                Cursor = Cursors.Hand,
+                Icon = new TextBlock { Text = "\uE8A9", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 12, Foreground = (Brush)new BrushConverter().ConvertFromString("#A78BFA")! }
+            };
+            if (menuItemStyle != null) startMenuItem.Style = menuItemStyle;
+            startMenuItem.Click += (s, e) =>
+            {
+                try
+                {
+                    var path = ShortcutService.CreateStartMenuShortcut(rule);
+                    ShowToast($"✔ Added '{rule.Name} (Proxy)' to Windows Start Menu!");
+                    AddActivityLog($"🚀 Start Menu shortcut created for '{rule.Name}'. Searchable in Windows.");
+                }
+                catch (Exception ex)
+                {
+                    ShowToast($"Failed to create shortcut: {ex.Message}", isWarning: true);
+                }
+            };
+            menu.Items.Add(startMenuItem);
+
+            // 3. Pin to Taskbar
+            var taskbarItem = new MenuItem
+            {
+                Header = "Pin to Taskbar (Prepare & Reveal in Explorer)",
+                InputGestureText = "Taskbar",
+                Foreground = Brushes.White,
+                Cursor = Cursors.Hand,
+                Icon = new TextBlock { Text = "\uE718", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 12, Foreground = (Brush)new BrushConverter().ConvertFromString("#F472B6")! }
+            };
+            if (menuItemStyle != null) taskbarItem.Style = menuItemStyle;
+            taskbarItem.Click += (s, e) =>
+            {
+                try
+                {
+                    var path = ShortcutService.CreateTaskbarShortcut(rule);
+                    ShowToast("✔ Shortcut created! Right-click highlighted file & select 'Pin to taskbar'.");
+                    AddActivityLog($"📍 Taskbar shortcut prepared for '{rule.Name}'. Highlighted in Explorer.");
+                }
+                catch (Exception ex)
+                {
+                    ShowToast($"Failed to prepare shortcut: {ex.Message}", isWarning: true);
+                }
+            };
+            menu.Items.Add(taskbarItem);
+
+            menu.Items.Add(new Separator { Background = (Brush)new BrushConverter().ConvertFromString("#32323A")!, Margin = new Thickness(0, 3, 0, 3) });
+
+            // 4. Create Everywhere
+            var everywhereItem = new MenuItem
+            {
+                Header = "Create Everywhere (Desktop + Start Menu + Taskbar)",
+                Foreground = (Brush)new BrushConverter().ConvertFromString("#FBBF24")!,
+                Cursor = Cursors.Hand,
+                Icon = new TextBlock { Text = "\uE735", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 12, Foreground = (Brush)new BrushConverter().ConvertFromString("#FBBF24")! }
+            };
+            if (menuItemStyle != null) everywhereItem.Style = menuItemStyle;
+            everywhereItem.Click += (s, e) =>
+            {
+                try
+                {
+                    ShortcutService.CreateEverywhereShortcuts(rule);
+                    ShowToast("✔ Created on Desktop, Start Menu & opened to Pin to taskbar!");
+                    AddActivityLog($"⚡ Direct shortcuts created everywhere for '{rule.Name}'.");
+                }
+                catch (Exception ex)
+                {
+                    ShowToast($"Failed to create shortcuts: {ex.Message}", isWarning: true);
+                }
+            };
+            menu.Items.Add(everywhereItem);
+
+            // 5. Open Shortcuts Folder
+            var folderItem = new MenuItem
+            {
+                Header = "Open Start Menu Programs Folder",
+                Foreground = (Brush)new BrushConverter().ConvertFromString("#9499AD")!,
+                Cursor = Cursors.Hand,
+                Icon = new TextBlock { Text = "\uED25", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 12, Foreground = (Brush)new BrushConverter().ConvertFromString("#9499AD")! }
+            };
+            if (menuItemStyle != null) folderItem.Style = menuItemStyle;
+            folderItem.Click += (s, e) =>
+            {
+                try
+                {
+                    var programsDir = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
+                    Process.Start(new ProcessStartInfo { FileName = programsDir, UseShellExecute = true });
+                }
+                catch { }
+            };
+            menu.Items.Add(folderItem);
+
+            menu.PlacementTarget = targetElement;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            menu.IsOpen = true;
+        }
+
         private void DeleteRule_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement elem && elem.DataContext is RuleItem rule)

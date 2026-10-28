@@ -97,13 +97,22 @@ public static class ConfigService
 ### `ShortcutService`
 Location: `Services/ShortcutService.cs`
 
-Generates Windows `.lnk` shortcuts on the user's Desktop with custom launch parameters and application icons.
+Generates Windows `.lnk` shortcuts on the Desktop, in the Start Menu, or prepared for Taskbar pinning with custom launch parameters and application icons.
 
 ```csharp
 public static class ShortcutService
 {
-    // Creates a desktop shortcut pointing to WindowsAntifyProxy.exe --launch "<RuleName>"
-    public static bool CreateDesktopShortcut(RuleItem rule);
+    // Creates a desktop shortcut
+    public static string CreateDesktopShortcut(RuleItem rule);
+
+    // Creates a Start Menu shortcut and attempts programmatic Pin to Start
+    public static string CreateStartMenuShortcut(RuleItem rule);
+
+    // Creates a shortcut and highlights it in Explorer for 1-click Pin to Taskbar
+    public static string CreateTaskbarShortcut(RuleItem rule);
+
+    // Creates shortcuts across Desktop, Start Menu, and highlights for Taskbar
+    public static string CreateEverywhereShortcuts(RuleItem rule);
 }
 ```
 

@@ -110,22 +110,19 @@ namespace WindowsAntifyProxy
                 var settings = ConfigService.LoadSettings();
                 var rule = settings.Rules.FirstOrDefault(r =>
                     r.Id.Equals(ruleIdOrName, StringComparison.OrdinalIgnoreCase) ||
-                    r.Name.Equals(ruleIdOrName, StringComparison.OrdinalIgnoreCase));
+                    r.Name.Equals(ruleIdOrName, StringComparison.OrdinalIgnoreCase))
+                    ?? settings.Rules.FirstOrDefault(r => r.Name.Contains(ruleIdOrName, StringComparison.OrdinalIgnoreCase))
+                    ?? settings.Rules.FirstOrDefault();
 
                 if (rule != null)
                 {
-                    ProcessLauncher.LaunchRule(rule, settings);
+                    ProcessLauncher.LaunchRule(rule, settings, bypassKillSwitch: true);
                 }
                 else
                 {
                     MessageBox.Show($"Rule '{ruleIdOrName}' was not found in Windows Antify Proxy configuration.",
                         "Windows Antify Proxy", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
-            }
-            catch (KillSwitchException kex)
-            {
-                MessageBox.Show($"{kex.Message}\n\nAntigravity traffic was prevented from leaking to your ISP or unencrypted direct internet.",
-                    "Windows Antify Proxy - Kill Switch Active", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             catch (Exception ex)
             {

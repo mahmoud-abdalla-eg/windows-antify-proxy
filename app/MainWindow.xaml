@@ -350,6 +350,64 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Windows 11 Dark Mode Context Menu & Menu Items -->
+        <Style x:Key="WinDarkContextMenu" TargetType="ContextMenu">
+            <Setter Property="Background" Value="#222228"/>
+            <Setter Property="BorderBrush" Value="#383842"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="4,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="16" ShadowDepth="4" Opacity="0.5" Color="#000000"/>
+                            </Border.Effect>
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="WinDarkMenuItem" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="#EEEEEE"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="ItemBd" Background="Transparent" CornerRadius="5" Padding="{TemplateBinding Padding}" Margin="1,1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Grid.Column="0" ContentSource="Icon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,8,0"/>
+                                <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" Foreground="#888892" FontSize="11" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBd" Property="Background" Value="#32323A"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#666670"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <!-- Main Window Canvas with Native Windows 11 Dark Aesthetic -->
@@ -609,6 +667,12 @@
                                         <TextBlock Text="Launch Now" FontWeight="SemiBold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>
+                                <Button Style="{StaticResource WinStandardButton}" Margin="0,0,8,0" Click="TopBarShortcut_Click" ToolTip="Create direct launch shortcut for selected app (Desktop, Start Menu, Taskbar)">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="&#xE718;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="#60CDFF" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Create Shortcut" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
                                 <Button Style="{StaticResource WinStandardButton}" Click="AddRule_Click" ToolTip="Add Application Rule">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="11" Foreground="#4ADE80" Margin="0,0,6,0" VerticalAlignment="Center"/>
@@ -736,6 +800,17 @@
                                                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                                         <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="9" Foreground="#60CDFF" Margin="0,0,4,0" VerticalAlignment="Center"/>
                                                                         <TextBlock Text="Restart" FontSize="11" Foreground="#60CDFF" VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                </Button>
+
+                                                                <!-- Dedicated Shortcut Button -->
+                                                                <Button Style="{StaticResource WinStandardButton}" 
+                                                                        Padding="7,4" Margin="0,0,5,0" Click="RuleShortcut_Click"
+                                                                        ToolTip="Create direct shortcut to launch directly with proxy (Desktop, Start Menu, Taskbar)">
+                                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                                        <TextBlock Text="&#xE718;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="#60CDFF" Margin="0,0,4,0" VerticalAlignment="Center"/>
+                                                                        <TextBlock Text="Shortcut" FontSize="11" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                                                        <TextBlock Text="&#xE70D;" FontFamily="Segoe MDL2 Assets" FontSize="7" Foreground="#888890" Margin="3,0,0,0" VerticalAlignment="Center"/>
                                                                     </StackPanel>
                                                                 </Button>
 
@@ -1389,10 +1464,16 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal" Grid.Column="0">
-                                    <Button Style="{StaticResource WinStandardButton}" Click="ModalLaunchNow_Click">
+                                    <Button Style="{StaticResource WinStandardButton}" Click="ModalLaunchNow_Click" Margin="0,0,8,0">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="9" Foreground="#60CDFF" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                             <TextBlock Text="Launch Now" Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Style="{StaticResource WinStandardButton}" Click="ModalShortcut_Click" ToolTip="Create direct launch shortcut (Desktop, Start Menu, Taskbar)">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="&#xE718;" FontFamily="Segoe MDL2 Assets" FontSize="9" Foreground="#60CDFF" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Create Shortcut" Foreground="#FFFFFF" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
