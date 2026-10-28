@@ -25,7 +25,13 @@
 <br/>
 
 <div align="center">
-  <img src="assets/app-screenshot.png" alt="Windows Antify Proxy Interface Screenshot" width="860" />
+  <img src="assets/app-screenshot.png" alt="Windows Antify Proxy Dashboard Telemetry Screenshot" width="860" />
+  <br/><br/>
+  <details>
+    <summary><b>📸 Click to preview Rules &amp; Process Control Management View (规则列表与进程管理)</b></summary>
+    <br/>
+    <img src="assets/rules-screenshot.png" alt="Windows Antify Proxy Rules View Screenshot" width="860" />
+  </details>
 </div>
 
 <br/>

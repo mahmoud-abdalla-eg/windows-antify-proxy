@@ -23,7 +23,13 @@
 <br/>
 
 <div align="center">
-  <img src="assets/app-screenshot.png" alt="Windows Antify Proxy 运行界面截图" width="860" />
+  <img src="assets/app-screenshot.png" alt="Windows Antify Proxy 实时遥测仪表盘截图" width="860" />
+  <br/><br/>
+  <details>
+    <summary><b>📸 点击展开查看规则管理与进程控制界面 (Rules View)</b></summary>
+    <br/>
+    <img src="assets/rules-screenshot.png" alt="Windows Antify Proxy 规则管理界面截图" width="860" />
+  </details>
 </div>
 
 <br/>
