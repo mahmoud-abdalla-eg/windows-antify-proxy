@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <RootNamespace>WindowsAntifyProxy</RootNamespace>
+    <AssemblyName>WindowsAntifyProxy</AssemblyName>
+    
+    <!-- Version 1 for Version Control -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Product>Windows Antify Proxy</Product>
+    <Company>Win Antify Proxy</Company>
+    <Description>Per-App Isolated Proxy &amp; Environment Manager for Windows</Description>
+    <Copyright>Copyright © 2026</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+    <Resource Include="antify-logo.png" />
+  </ItemGroup>
+
+</Project>
